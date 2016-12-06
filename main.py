@@ -16,16 +16,16 @@ def main() :
     # Load images...
     S.loadImages()
 
-    # Init flowers
-    S.flowers = []
-    for i in range(S.numberOfFlowers) :
-        S.flowers.append(F.Flower(i))
-
     # Init character
     S.character = C.Character(0)
 
     # Init interface
     S.interface = I.Interface()
+    
+    # Init flowers
+    S.flowers = []
+    for i in range(S.numberOfFlowers) :
+        S.flowers.append(F.Flower(i))
 
     # Loop
     while True :

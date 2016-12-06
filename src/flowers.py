@@ -17,12 +17,19 @@ class Flower() :
             self.stems.append(random.randint(0,3))
         self.evolveStep = random.randint(2,5)
         self.face = random.randint(0,2)
-        self.nextStepCooldown = 50
-        self.stemAnimCooldown = 20
+        self.nextStepCooldown = int(50 / shared.speedFactor)
+        self.stemAnimCooldown = int(20 / shared.speedFactor)
         self.stemSprite = 0
         self.flowerType = "neutral"
         self.status = "growing"
+    
+    def evolve(self) :
 
+        self.nextStepCooldown = int((200 + random.randint(-5,5)) / shared.speedFactor)
+        self.face = random.randint(0,2)
+        self.flowerType = ["good", "evil"][random.randint(0,1)] 
+        self.status = "grown"
+    
     def render(self) :
 
         for i in range(self.height) :
@@ -39,6 +46,8 @@ class Flower() :
             currentHead   = shared.imagedb["flowersHead"][self.flowerType][self.face]
         elif (self.status == "poping") :
             currentHead   = shared.imagedb["flowersPop"][self.flowerType][self.step]
+        elif (self.status != "grown") :
+            currentHead   = shared.imagedb["flowersDead"][self.flowerType]
 
         wHead,   hHead   = currentHead.get_size()
         shared.game.screen.blit(currentHead,
@@ -47,52 +56,76 @@ class Flower() :
 
 
     def update(self) :
-        
+       
+        # Stems animation
         self.stemAnimCooldown -= 1
         if (self.stemAnimCooldown <= 0) :
-            self.stemAnimCooldown = 20
+            self.stemAnimCooldown = int(20 + random.randint(-2,2) / shared.speedFactor)
             self.stemSprite += 1
             if (self.stemSprite >= 2) :
                 self.stemSprite = 0
 
-        #if (shared.character.watering) and (shared.character.position == self.position+1) :
-        #   self.evolveCooldown -= 2
-        #   if (self.state == 5) and (self.evolveCooldown <= 1) :
-        #       shared.character.addCombo()
-
-        if (self.status != "grown") :
-            self.nextStepCooldown -= 1
+        
+        self.nextStepCooldown -= 1
 
         if (self.nextStepCooldown <= 0) :
-            self.step += 1
-            if ((self.status == "growing") and (self.step >= self.evolveStep)) :
-                self.nextStepCooldown = 10000 + random.randint(-10,10)
-                self.face = random.randint(0,2)
-                flowerType = [ "good", "evil" ]
-                self.flowerType = flowerType[random.randint(0,1)] 
-                self.status = "grown"
-            elif (self.status == "poping") :
-                self.nextStepCooldown = 5
-            else :
-                self.nextStepCooldown = 50 + random.randint(-5,5)
 
-            if (self.status == "poping") and (self.step >= len(shared.imagedb["flowersPop"][self.flowerType])) :
-                self.regen()
+            if  (self.status == "grown") :
+                self.nextStepCooldown = int(50 / shared.speedFactor)
+                self.status = "dying"
+                shared.character.badAction()
                 return
-            if (self.status == "growing") :
+            elif (self.status == "growing") :
+                self.nextStepCooldown = int((50 + random.randint(-5,5)) / shared.speedFactor)
+                self.step += 1
                 self.height += 1
+                if (self.step >= self.evolveStep) : 
+                    self.evolve()
+                return
+            elif (self.status == "poping") :
+                self.step += 1
+                self.nextStepCooldown = 5
+                if (self.step >= len(shared.imagedb["flowersPop"][self.flowerType])) :
+                    self.regen()
+                return
+            elif (self.status == "dying") :
+                self.nextStepCooldown = int((50 + random.randint(-5,5)) / shared.speedFactor)
+
+                self.step -= 1
+                self.height -= 1
+                if (self.step <= 0) :
+                    self.regen()
+                return
+
 
     def water(self) :
-        
-        if (self.flowerType == "neutral") :
+
+        if (self.status != "grown") :
             return
+        
         if (self.flowerType == "good") :
-            shared.character.addCombo()
-        print("("+str(self.position)+") I iz being watered <3")
-        self.nextStepCooldown = 10 
-        self.status = "poping"
-        self.step = 0
+            self.nextStepCooldown = 10
+            self.status = "poping"
+            self.step = 0
+            shared.character.goodAction()
+        elif (self.flowerType == "evil") : 
+            self.nextStepCooldown = int(50  / shared.speedFactor)
+            self.status = "dying"
+            shared.character.badAction()
 
     def cut(self) :
+        
+        if (self.status != "grown") :
+            return
 
-        print("("+str(self.position)+") I iz being cut emaged !")
+        if (self.flowerType == "evil") :
+            self.nextStepCooldown = 10
+            self.status = "poping"
+            self.step = 0
+            shared.character.goodAction()
+        elif (self.flowerType == "good") : 
+            self.nextStepCooldown = int(50  / shared.speedFactor)
+            self.status = "dying"
+            shared.character.badAction()
+
+

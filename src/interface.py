@@ -8,11 +8,17 @@ class Interface() :
 
         self.scoreFont = pygame.font.Font("./assets/bitdust2.ttf",32)
         self.scoreText = self.makeScoreText(shared.character.score)
-
+        self.speedUpCooldown = 500
+        shared.speedFactor = 1.0
 
     def update(self) :
 
         self.scoreText = self.makeScoreText(shared.character.score)
+
+        self.speedUpCooldown -= 1
+        if (self.speedUpCooldown <= 0) :
+            self.speedUpCooldown = 500
+            shared.speedFactor += 0.3
 
     def render(self) :
 

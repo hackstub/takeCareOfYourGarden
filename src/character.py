@@ -1,4 +1,6 @@
 import shared
+import pygame
+import sys
 
 class Character() :
 
@@ -10,27 +12,27 @@ class Character() :
         self.positionDest = -1
         self.direction = 0
         self.score = 0
-        self.lives = 4
+        self.lives = 3
         self.combo = 0
-        self.watering = False
-        self.wateringSpriteCooldown = 0
-        self.wateringSpriteId = 0
+        self.action = None
+        self.actionSpriteCooldown = 0
+        self.actionSpriteId = 0
         
         self.updateCurrentSprite()
 
     def render(self) :
         
-        w, h = self.currentSprite.get_size()
-
-        shared.game.screen.blit(self.currentSprite,
-                                (shared.characterBaseX - w/2 + self.position*shared.flowersSeparation,
-                                 shared.characterBaseY - h))
-
-        if (self.watering) :
-            shared.game.screen.blit(shared.imagedb["watering"][self.wateringSpriteId],
-                                    (shared.flowersBaseX + (self.position-1)*shared.flowersSeparation + 20,
-                                     shared.flowersBaseY - 30))
-
+        if (self.action != None) :
+            s = shared.imagedb["actions"][self.action][self.actionSpriteId]
+            w, h = s.get_size()
+            shared.game.screen.blit(s,
+                                    (shared.characterBaseX - w/2 + self.position*shared.flowersSeparation,
+                                     shared.characterBaseY - int(h*0.83)))
+        else :
+            w, h = self.currentSprite.get_size()
+            shared.game.screen.blit(self.currentSprite,
+                                    (shared.characterBaseX - w/2 + self.position*shared.flowersSeparation,
+                                     shared.characterBaseY - h))
 
         
     def updateCurrentSprite(self) :
@@ -47,14 +49,14 @@ class Character() :
 
     def update(self) :
 
-        if (self.watering) :
+        if (self.action) :
 
-            self.wateringSpriteCooldown -= 1
-            if (self.wateringSpriteCooldown == 0) :
-                self.wateringSpriteCooldown = 5
-                self.wateringSpriteId += 1
-                if (self.wateringSpriteId >= len(shared.imagedb["watering"])) :
-                    self.wateringSpriteId = 0
+            self.actionSpriteCooldown -= 1
+            if (self.actionSpriteCooldown == 0) :
+                self.actionSpriteCooldown = 10
+                self.actionSpriteId += 1
+                if (self.actionSpriteId >= 2) :
+                    self.action = None
 
         if (self.positionDest == -1) : return
 
@@ -73,14 +75,11 @@ class Character() :
 
         if (self.positionDest != -1) : return
         if (self.position == 0) : return
-        
-        if (self.watering) : 
-            self.watering = False
-            return
+        if (self.action != None) : return
 
-        self.watering = True
-        self.wateringSpriteCooldown = 5
-        self.wateringSpriteId = 0
+        self.action = "watering"
+        self.actionSpriteCooldown = 10
+        self.actionSpriteId = 0
         shared.flowers[self.position-1].water() 
 
 
@@ -88,15 +87,21 @@ class Character() :
 
         if (self.positionDest != -1) : return
         if (self.position >= shared.numberOfFlowers) : return
+        if (self.action != None) : return
+ 
+        self.action = "cutting"
+        self.actionSpriteCooldown = 10
+        self.actionSpriteId = 0
 
         shared.flowers[self.position].cut()
 
 
     def move(self, direction) :
 
+        if (self.action != None) : return
         if (self.positionDest != -1) : return
        
-        self.watering = False
+        self.action = None
 
         self.positionDest = self.position + direction
 
@@ -104,14 +109,29 @@ class Character() :
             self.positionDest = -1
 
 
-    def addCombo(self) :
+    def goodAction(self) :
 
         self.combo += 1
-        self.score += 100
+        self.score += 20
 
         if (self.combo >= 4) :
             print("Combo !!")
             self.combo = 0
             self.score += 100
+            self.lives += 1
+            if (self.lives > 4) :
+                self.lives = 4
+
+    def badAction(self) :
+
+        self.combo = 0
+        self.score -= 30
+        self.lives -= 1
+
+        if (self.lives <= 0) :
+            print("Lost with score of "+str(self.score))
+            pygame.quit()
+            sys.exit(0)
+
 
 

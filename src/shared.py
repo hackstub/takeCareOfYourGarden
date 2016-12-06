@@ -41,8 +41,9 @@ def loadImages() :
         imagedb["flowersHead"]["evil"]   .append(getSprite(flowersHead, i, 1, 175, 175))
         imagedb["flowersHead"]["neutral"].append(getSprite(flowersHead, i, 2, 175, 175))
 
-    imagedb["flowersHead-good-dead"] = getSprite(flowersHead, 3, 0, 175, 175)
-    imagedb["flowersHead-evil-dead"] = getSprite(flowersHead, 3, 1, 175, 175)
+    imagedb["flowersDead"] = {}
+    imagedb["flowersDead"]["good"] = getSprite(flowersHead, 3, 0, 175, 175)
+    imagedb["flowersDead"]["evil"] = getSprite(flowersHead, 3, 1, 175, 175)
 
     flowersPop = pygame.image.load("assets/flowersPop.png")
     imagedb["flowersPop"] = {}
@@ -68,8 +69,19 @@ def loadImages() :
     imagedb["watering"] = []
     
     for i in range(3) :
-        print(i)
         imagedb["watering"].append(getSprite(watering, i, 0, 64, 64))
+
+    # Cut animation
+    persoActions = pygame.image.load("assets/persoActions.png")
+    imagedb["actions"] = {}
+    imagedb["actions"]["cutting"] = []
+    imagedb["actions"]["watering"] = []
+    
+    for i in range(2) :
+        imagedb["actions"]["cutting"].append(getSprite(persoActions, i, 0, 225, 225))
+        imagedb["actions"]["watering"].append(getSprite(persoActions, i, 1, 225, 225))
+
+
 
     # Combo icon
     imagedb["comboicon"] = pygame.image.load("assets/flowericon.png")
