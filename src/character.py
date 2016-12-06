@@ -14,23 +14,24 @@ class Character() :
         self.score = 0
         self.lives = 3
         self.combo = 0
-        self.action = None
-        self.actionSpriteCooldown = 0
+        self.action = "idle"
+        self.actionSpriteCooldown = 30
         self.actionSpriteId = 0
         
-        self.updateCurrentSprite()
+        #self.updateCurrentSprite()
 
     def render(self) :
         
-        if (self.action != None) :
+        if (self.action != "moving") :
             s = shared.imagedb["actions"][self.action][self.actionSpriteId]
             w, h = s.get_size()
             shared.game.screen.blit(s,
                                     (shared.characterBaseX - w/2 + self.position*shared.flowersSeparation,
                                      shared.characterBaseY - int(h*0.83)))
         else :
-            w, h = self.currentSprite.get_size()
-            shared.game.screen.blit(self.currentSprite,
+            s = self.currentSprite 
+            w, h = s.get_size()
+            shared.game.screen.blit(s,
                                     (shared.characterBaseX - w/2 + self.position*shared.flowersSeparation,
                                      shared.characterBaseY - h))
 
@@ -38,7 +39,7 @@ class Character() :
     def updateCurrentSprite(self) :
 
         if (self.positionDest == -1) :
-            self.currentSprite = shared.imagedb["char"]["standing"]
+            #self.currentSprite = shared.imagedb["char"]["standing"]
             return
 
         direction = "left" if (self.positionDest - self.position > 0) else "right"
@@ -49,14 +50,18 @@ class Character() :
 
     def update(self) :
 
-        if (self.action) :
-
-            self.actionSpriteCooldown -= 1
-            if (self.actionSpriteCooldown == 0) :
+        self.actionSpriteCooldown -= 1
+        if (self.actionSpriteCooldown == 0) :
+            self.actionSpriteId += 1
+            if (self.actionSpriteId >= 2) :
+                self.actionSpriteId = 0
+                if (self.action != "idle") :
+                    self.action = "idle"
+            
+            if (self.action == "idle") :
+                self.actionSpriteCooldown = 30
+            else :
                 self.actionSpriteCooldown = 10
-                self.actionSpriteId += 1
-                if (self.actionSpriteId >= 2) :
-                    self.action = None
 
         if (self.positionDest == -1) : return
 
@@ -67,6 +72,7 @@ class Character() :
         if  (abs(self.positionDest - self.position) <= 0.02) :
             self.position = self.positionDest
             self.positionDest = -1
+            self.action = "idle"
         
         self.updateCurrentSprite()
 
@@ -75,7 +81,7 @@ class Character() :
 
         if (self.positionDest != -1) : return
         if (self.position == 0) : return
-        if (self.action != None) : return
+        if (self.action != "idle") : return
 
         self.action = "watering"
         self.actionSpriteCooldown = 10
@@ -87,7 +93,7 @@ class Character() :
 
         if (self.positionDest != -1) : return
         if (self.position >= shared.numberOfFlowers) : return
-        if (self.action != None) : return
+        if (self.action != "idle") : return
  
         self.action = "cutting"
         self.actionSpriteCooldown = 10
@@ -98,10 +104,10 @@ class Character() :
 
     def move(self, direction) :
 
-        if (self.action != None) : return
+        if (self.action != "idle") : return
         if (self.positionDest != -1) : return
        
-        self.action = None
+        self.action = "moving"
 
         self.positionDest = self.position + direction
 
@@ -115,7 +121,6 @@ class Character() :
         self.score += 20
 
         if (self.combo >= 4) :
-            print("Combo !!")
             self.combo = 0
             self.score += 100
             self.lives += 1

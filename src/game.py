@@ -29,9 +29,6 @@ class Game() :
         # Handle events
         self.eventHandler()
         
-        # Handle keys
-        self.keysHandler()
-
         # Update stuff
         s.interface.update()
         s.character.update()
@@ -63,17 +60,12 @@ class Game() :
                 if (event.key == pygame.K_f) :
                     s.character.cut()
 
+                moveDirection = 0
+                if (event.key == pygame.K_LEFT)   : moveDirection = -1
+                if (event.key == pygame.K_RIGHT)  : moveDirection = +1
 
-    def keysHandler(self) :
-        
-        keyPressed = pygame.key.get_pressed()
-
-        moveDirection = 0
-        if (keyPressed[pygame.K_LEFT])  : moveDirection = -1
-        if (keyPressed[pygame.K_RIGHT]) : moveDirection = +1
-
-        if (moveDirection != 0) :
-            s.character.move(moveDirection)
+                if (moveDirection != 0) :
+                    s.character.move(moveDirection)
 
 
 

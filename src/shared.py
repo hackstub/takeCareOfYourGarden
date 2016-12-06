@@ -74,12 +74,14 @@ def loadImages() :
     # Cut animation
     persoActions = pygame.image.load("assets/persoActions.png")
     imagedb["actions"] = {}
+    imagedb["actions"]["idle"] = []
     imagedb["actions"]["cutting"] = []
     imagedb["actions"]["watering"] = []
     
     for i in range(2) :
-        imagedb["actions"]["cutting"].append(getSprite(persoActions, i, 0, 225, 225))
-        imagedb["actions"]["watering"].append(getSprite(persoActions, i, 1, 225, 225))
+        imagedb["actions"]["idle"]    .append(getSprite(persoActions, i, 0, 225, 225))
+        imagedb["actions"]["cutting"] .append(getSprite(persoActions, i, 1, 225, 225))
+        imagedb["actions"]["watering"].append(getSprite(persoActions, i, 2, 225, 225))
 
 
 
