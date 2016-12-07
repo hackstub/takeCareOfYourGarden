@@ -1,4 +1,4 @@
-import shared
+import src.shared as shared
 import pygame
 import sys
 
@@ -33,7 +33,7 @@ class Character() :
             w, h = s.get_size()
             shared.game.screen.blit(s,
                                     (shared.characterBaseX - w/2 + self.position*shared.flowersSeparation,
-                                     shared.characterBaseY - h))
+                                     shared.characterBaseY - int(h*0.83)))
 
         
     def updateCurrentSprite(self) :
@@ -42,10 +42,10 @@ class Character() :
             #self.currentSprite = shared.imagedb["char"]["standing"]
             return
 
-        direction = "left" if (self.positionDest - self.position > 0) else "right"
+        direction = "movingleft" if (self.positionDest - self.position > 0) else "movingright"
         id = int(abs(self.positionDest - self.position) * 4)
             
-        self.currentSprite = shared.imagedb["char"][direction][id]
+        self.currentSprite = shared.imagedb["actions"][direction][id]
 
 
     def update(self) :
@@ -53,6 +53,10 @@ class Character() :
         self.actionSpriteCooldown -= 1
         if (self.actionSpriteCooldown == 0) :
             self.actionSpriteId += 1
+            if (self.action == "watering") and (self.actionSpriteId == 1) :
+                shared.flowers[self.position-1].water() 
+            if (self.action == "cutting") and (self.actionSpriteId == 1) :
+                shared.flowers[self.position].cut() 
             if (self.actionSpriteId >= 2) :
                 self.actionSpriteId = 0
                 if (self.action != "idle") :
@@ -86,8 +90,6 @@ class Character() :
         self.action = "watering"
         self.actionSpriteCooldown = 10
         self.actionSpriteId = 0
-        shared.flowers[self.position-1].water() 
-
 
     def cut(self) :
 
@@ -99,20 +101,19 @@ class Character() :
         self.actionSpriteCooldown = 10
         self.actionSpriteId = 0
 
-        shared.flowers[self.position].cut()
-
 
     def move(self, direction) :
 
         if (self.action != "idle") : return
         if (self.positionDest != -1) : return
-       
+
+        if (self.position == 0) and (direction == -1) :
+            return
+        if (self.position >= shared.numberOfFlowers) and (direction == +1) :
+            return
+
         self.action = "moving"
-
         self.positionDest = self.position + direction
-
-        if (self.positionDest < 0) or (self.positionDest > shared.numberOfFlowers) :
-            self.positionDest = -1
 
 
     def goodAction(self) :
@@ -132,11 +133,21 @@ class Character() :
         self.combo = 0
         self.score -= 30
         self.lives -= 1
+        self.getHit()
 
         if (self.lives <= 0) :
             print("Lost with score of "+str(self.score))
             pygame.quit()
             sys.exit(0)
 
+    def getHit(self) :
+       
+        if (self.positionDest != -1) :
+            self.position = self.positionDest
+            self.positionDest = -1
+
+        self.action = "gethit"
+        self.actionSpriteCooldown = 10
+        self.actionSpriteId = 0
 
 

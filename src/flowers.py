@@ -1,4 +1,4 @@
-import shared
+import src.shared as shared
 import random
 
 class Flower() :

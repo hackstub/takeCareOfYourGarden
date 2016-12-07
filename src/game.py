@@ -1,5 +1,5 @@
 import sys
-import shared as s
+import src.shared as s
 
 import pygame
 from pygame.locals import *

@@ -3,11 +3,11 @@ import sys
 import pygame
 from pygame.locals import *
 
-import interface as I
-import character as C
-import flowers as F
-import shared as S
-import game as G
+import src.interface as I
+import src.character as C
+import src.flowers as F
+import src.shared as S
+import src.game as G
 
 def main() :
     

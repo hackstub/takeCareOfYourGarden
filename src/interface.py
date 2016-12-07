@@ -1,6 +1,11 @@
-import shared
+import src.shared as shared
+import random
 import pygame
 from pygame.locals import *
+
+
+maxLives = 4
+maxCombo = 3
 
 class Interface() :
 
@@ -11,6 +16,18 @@ class Interface() :
         self.speedUpCooldown = 500
         shared.speedFactor = 1.0
 
+        self.livesAnimCooldown = [  ]
+        self.livesSpriteId     = [  ]
+        for i in range(maxLives) :
+            self.livesAnimCooldown.append(20 + random.randint(-3,3))
+            self.livesSpriteId.append(random.randint(0,3))
+
+        self.comboAnimCooldown = [  ]
+        self.comboSpriteId     = [  ]
+        for i in range(maxCombo) :
+            self.comboAnimCooldown.append(20 + random.randint(-3,3))
+            self.comboSpriteId.append(random.randint(0,3))
+
     def update(self) :
 
         self.scoreText = self.makeScoreText(shared.character.score)
@@ -19,6 +36,22 @@ class Interface() :
         if (self.speedUpCooldown <= 0) :
             self.speedUpCooldown = 500
             shared.speedFactor += 0.3
+
+        for i in range(maxLives) :
+            self.livesAnimCooldown[i] -= 1
+            if (self.livesAnimCooldown[i] == 0) :
+                self.livesAnimCooldown[i] = 20 + random.randint(-3,3)
+                self.livesSpriteId[i] += 1
+                if (self.livesSpriteId[i] >= 3) :
+                    self.livesSpriteId[i] = 0
+
+        for i in range(maxCombo) :
+            self.comboAnimCooldown[i] -= 1
+            if (self.comboAnimCooldown[i] == 0) :
+                self.comboAnimCooldown[i] = 20 + random.randint(-3,3)
+                self.comboSpriteId[i] += 1
+                if (self.comboSpriteId[i] >= 3) :
+                    self.comboSpriteId[i] = 0
 
     def render(self) :
 
@@ -49,15 +82,18 @@ class Interface() :
     def renderLives(self) :
 
         for i in range(shared.character.lives) :
-            shared.game.screen.blit(shared.imagedb["life"], (10 + i*20, 10))
+            s = shared.imagedb["indicator"]["life"][self.livesSpriteId[i]]
+            w, h = s.get_size()
+            shared.game.screen.blit(s, (0 + i*(w-20), 10))
 
     def renderCombo(self) :
 
         offset = shared.character.combo * 0.5
 
         for i in range(shared.character.combo) :
-            shared.game.screen.blit(shared.imagedb["comboicon"],
-                    (shared.game.width/2 + (i - offset) * 70, shared.game.height  - 70))
+            s = shared.imagedb["indicator"]["combo"][self.comboSpriteId[i]]
+            w, h = s.get_size()
+            shared.game.screen.blit(s, (shared.game.width/2 + (i - offset) * (w+5), shared.game.height - h - 5))
 
 
 

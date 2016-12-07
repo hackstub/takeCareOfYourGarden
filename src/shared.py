@@ -19,9 +19,14 @@ def loadImages() :
     bg      = pygame.image.load("assets/bg.png")
     imagedb["bg"] = bg
 
-    # Life indicator
-    life = pygame.image.load("assets/heart.png")
-    imagedb["life"] = life
+    # Indicators
+    indicators = pygame.image.load("assets/indicators.png")
+    imagedb["indicator"] = {}
+    imagedb["indicator"]["life"] = []
+    imagedb["indicator"]["combo"] = []
+    for i in range(4) :
+        imagedb["indicator"]["life"].append(getSprite(indicators, i, 0, 87, 87))
+        imagedb["indicator"]["combo"].append(getSprite(indicators, i, 2, 87, 87))
     
     # Stems
     stems =  pygame.image.load("assets/stems.png")
@@ -54,41 +59,35 @@ def loadImages() :
         imagedb["flowersPop"]["evil"].append(getSprite(flowersPop, i, 1, 250, 250))
 
     # Character sprites
-    char = pygame.image.load("assets/perso.png")
-    imagedb["char"] = {}
-    imagedb["char"]["standing"] = getSprite(char, 0, 0, 48, 64)
-    imagedb["char"]["left"]  = []
-    imagedb["char"]["right"] = []
+    #char = pygame.image.load("assets/perso.png")
+    #imagedb["char"] = {}
+    #imagedb["char"]["standing"] = getSprite(char, 0, 0, 48, 64)
+    #imagedb["char"]["left"]  = []
+    #imagedb["char"]["right"] = []
     
-    for i in range(4) :
-        imagedb["char"]["left"].append(getSprite(char, i, 1, 48, 64))
-        imagedb["char"]["right"].append(getSprite(char, i, 2, 48, 64))
-
-    # Watering animation
-    watering = pygame.image.load("assets/watering.png")
-    imagedb["watering"] = []
-    
-    for i in range(3) :
-        imagedb["watering"].append(getSprite(watering, i, 0, 64, 64))
+    #for i in range(4) :
+    #    imagedb["char"]["left"].append(getSprite(char, i, 1, 48, 64))
+    #    imagedb["char"]["right"].append(getSprite(char, i, 2, 48, 64))
 
     # Cut animation
     persoActions = pygame.image.load("assets/persoActions.png")
     imagedb["actions"] = {}
-    imagedb["actions"]["idle"] = []
-    imagedb["actions"]["cutting"] = []
-    imagedb["actions"]["watering"] = []
+    imagedb["actions"]["movingleft"]  = []
+    imagedb["actions"]["movingright"] = []
+    imagedb["actions"]["idle"]        = []
+    imagedb["actions"]["cutting"]     = []
+    imagedb["actions"]["watering"]    = []
+    imagedb["actions"]["gethit"]      = []
+
+    for i in range(4) :    
+        imagedb["actions"]["movingleft"] .append(getSprite(persoActions, i, 0, 225, 225))
+        imagedb["actions"]["movingright"].append(getSprite(persoActions, i, 1, 225, 225))
     
     for i in range(2) :
-        imagedb["actions"]["idle"]    .append(getSprite(persoActions, i, 0, 225, 225))
-        imagedb["actions"]["cutting"] .append(getSprite(persoActions, i, 1, 225, 225))
-        imagedb["actions"]["watering"].append(getSprite(persoActions, i, 2, 225, 225))
-
-
-
-    # Combo icon
-    imagedb["comboicon"] = pygame.image.load("assets/flowericon.png")
-
-    print(imagedb)
+        imagedb["actions"]["idle"]    .append(getSprite(persoActions, i, 2, 225, 225))
+        imagedb["actions"]["cutting"] .append(getSprite(persoActions, i, 3, 225, 225))
+        imagedb["actions"]["watering"].append(getSprite(persoActions, i, 4, 225, 225))
+        imagedb["actions"]["gethit"]  .append(getSprite(persoActions, i, 5, 225, 225))
 
 def getSprite(img, x, y, w=32, h=32) :
 
