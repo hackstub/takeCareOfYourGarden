@@ -22,15 +22,25 @@ class Flower() :
         self.stemSprite = 0
         self.flowerType = "neutral"
         self.status = "growing"
+        
+        if (shared.mode == "title") :
+            self.enabled = False
+        else :
+            self.enabled = True
     
-    def evolve(self) :
+    def evolve(self, type_ = None) :
 
         self.nextStepCooldown = int((200 + random.randint(-5,5)) / shared.speedFactor)
         self.face = random.randint(0,2)
-        self.flowerType = ["good", "evil"][random.randint(0,1)] 
         self.status = "grown"
+        if (type_ == None) :
+            self.flowerType = ["good", "evil"][random.randint(0,1)] 
+        else :
+            self.flowerType = type_
     
     def render(self) :
+
+        if not (self.enabled) : return
 
         for i in range(self.height) :
             stemId = self.stems[i]
@@ -56,6 +66,8 @@ class Flower() :
 
 
     def update(self) :
+        
+        if not (self.enabled) : return
        
         # Stems animation
         self.stemAnimCooldown -= 1
@@ -100,6 +112,8 @@ class Flower() :
 
     def water(self) :
 
+        if not (self.enabled) : return
+        
         if (self.status != "grown") :
             return
         
@@ -114,6 +128,8 @@ class Flower() :
             shared.character.badAction()
 
     def cut(self) :
+        
+        if not (self.enabled) : return
         
         if (self.status != "grown") :
             return

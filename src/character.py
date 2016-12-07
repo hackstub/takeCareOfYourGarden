@@ -18,36 +18,17 @@ class Character() :
         self.actionSpriteCooldown = 30
         self.actionSpriteId = 0
         
-        #self.updateCurrentSprite()
-
     def render(self) :
-        
-        if (self.action != "moving") :
-            s = shared.imagedb["actions"][self.action][self.actionSpriteId]
-            w, h = s.get_size()
-            shared.game.screen.blit(s,
-                                    (shared.characterBaseX - w/2 + self.position*shared.flowersSeparation,
-                                     shared.characterBaseY - int(h*0.83)))
-        else :
-            s = self.currentSprite 
-            w, h = s.get_size()
-            shared.game.screen.blit(s,
-                                    (shared.characterBaseX - w/2 + self.position*shared.flowersSeparation,
-                                     shared.characterBaseY - int(h*0.83)))
+       
+
+        s = shared.imagedb["actions"][self.action][self.actionSpriteId]
+        w, h = s.get_size()
+        shared.game.screen.blit(s,
+                                (shared.characterBaseX - w/2 + self.position*shared.flowersSeparation,
+                                 shared.characterBaseY - int(h*0.83)))
 
         
-    def updateCurrentSprite(self) :
-
-        if (self.positionDest == -1) :
-            #self.currentSprite = shared.imagedb["char"]["standing"]
-            return
-
-        direction = "movingleft" if (self.positionDest - self.position > 0) else "movingright"
-        id = int(abs(self.positionDest - self.position) * 4)
-            
-        self.currentSprite = shared.imagedb["actions"][direction][id]
-
-
+        
     def update(self) :
 
         self.actionSpriteCooldown -= 1
@@ -61,6 +42,8 @@ class Character() :
                 self.actionSpriteId = 0
                 if (self.action != "idle") :
                     self.action = "idle"
+                if (shared.mode == "gameover") :
+                    self.action = "gethit"
             
             if (self.action == "idle") :
                 self.actionSpriteCooldown = 30
@@ -77,8 +60,10 @@ class Character() :
             self.position = self.positionDest
             self.positionDest = -1
             self.action = "idle"
-        
-        self.updateCurrentSprite()
+       
+        if (self.action.startswith("moving")) :
+            self.actionSpriteId = int(abs(self.positionDest - self.position) * 4)
+            
 
 
     def water(self) :
@@ -112,8 +97,8 @@ class Character() :
         if (self.position >= shared.numberOfFlowers) and (direction == +1) :
             return
 
-        self.action = "moving"
         self.positionDest = self.position + direction
+        self.action = "movingleft" if (self.positionDest - self.position > 0) else "movingright"
 
 
     def goodAction(self) :
@@ -136,9 +121,7 @@ class Character() :
         self.getHit()
 
         if (self.lives <= 0) :
-            print("Lost with score of "+str(self.score))
-            pygame.quit()
-            sys.exit(0)
+            shared.game.gameover()
 
     def getHit(self) :
        

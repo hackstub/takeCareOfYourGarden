@@ -10,6 +10,8 @@ characterBaseX = 67
 characterBaseY = 550
 flowersBaseX = 167
 flowersBaseY = 530
+        
+speedFactor = 1.0
 
 imagedb = { }
 
@@ -27,7 +29,33 @@ def loadImages() :
     for i in range(4) :
         imagedb["indicator"]["life"].append(getSprite(indicators, i, 0, 87, 87))
         imagedb["indicator"]["combo"].append(getSprite(indicators, i, 2, 87, 87))
-    
+
+    # Tuto stuff
+    tutostuff = pygame.image.load("assets/tuto.png")
+    imagedb["tuto"] = {}
+    imagedb["tuto"]["leftkey"]  = []
+    imagedb["tuto"]["rightkey"] = []
+    imagedb["tuto"]["Dkey"]     = []
+    imagedb["tuto"]["Fkey"]     = []
+    imagedb["tuto"]["poof"]     = []
+    for i in range(2) :
+        imagedb["tuto"]["rightkey"].append(getSprite(tutostuff, i, 0, 175, 175))
+        imagedb["tuto"]["leftkey"] .append(getSprite(tutostuff, i, 1, 175, 175))
+        imagedb["tuto"]["Dkey"]    .append(getSprite(tutostuff, i, 2, 175, 175))
+        imagedb["tuto"]["Fkey"]    .append(getSprite(tutostuff, i, 3, 175, 175))
+        imagedb["tuto"]["poof"]    .append(getSprite(tutostuff, i, 4, 175, 175))
+
+    # Title
+    title = pygame.image.load("assets/title.png")
+    imagedb["title"] = []
+    imagedb["title"].append(getSprite(title, 0, 0, 610, 250))
+    imagedb["title"].append(getSprite(title, 0, 1, 610, 250))
+
+    # Game over stuff
+    gameover = pygame.image.load("assets/gameover.png")
+    imagedb["gameoverscorebg"] = getSprite(gameover, 0, 0, 400, 250) 
+    imagedb["again"]           = getSprite(gameover, 1, 0, 400, 250) 
+
     # Stems
     stems =  pygame.image.load("assets/stems.png")
     imagedb["stems"] = [[],[]]
